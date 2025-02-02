@@ -6,7 +6,7 @@ use std::{
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
 // 时间 24 * 60 * 60
-#[derive(Debug,Eq,PartialEq,Clone,Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub struct Time(i64);
 
 impl Time {
@@ -47,22 +47,22 @@ impl<'de> Deserialize<'de> for Time {
     where
         D: Deserializer<'de>,
     {
-        use de::Error;
+        fn parse_num<'de, D>(it: &str) -> Result<i64, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            it.parse()
+                .map_err(|_| de::Error::invalid_type(de::Unexpected::Str(it), &"an integer"))
+        }
         let s = String::deserialize(deserializer)?;
         let v: Vec<&str> = s.split(':').collect();
         let len = v.len();
         if len != 3 {
             return Err(de::Error::invalid_length(len, &"time's must be HH:mm:ss"));
         }
-        let h = v[0]
-            .parse()
-            .map_err(|_| Error::invalid_type(de::Unexpected::Str(v[0]), &"an integer"))?;
-        let m = v[1]
-            .parse()
-            .map_err(|_| Error::invalid_type(de::Unexpected::Str(v[1]), &"an integer"))?;
-        let s = v[2]
-            .parse()
-            .map_err(|_| Error::invalid_type(de::Unexpected::Str(v[2]), &"an integer"))?;
+        let h = parse_num::<D>(v[0])?;
+        let m = parse_num::<D>(v[1])?;
+        let s = parse_num::<D>(v[2])?;
         Ok(Time::new(h, m, s))
     }
 }
@@ -98,9 +98,9 @@ mod test {
 
     #[test]
     fn test_time_serde() {
-        let t = Time::new(1, 2, 3);
+        let t = Time::new(0, 2, 3);
         let s = serde_json::to_string(&t).unwrap();
-        assert_eq!(s, "\"01:02:03\"");
+        assert_eq!(s, "\"00:02:03\"");
         let t2: Time = serde_json::from_str(&s).unwrap();
         assert_eq!(t, t2);
     }

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-#[derive(Debug, PartialEq, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, PartialEq, Clone, Copy, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum NumbericWeekday {
     Monday = 1,
@@ -38,21 +38,21 @@ impl NumbericWeekday {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
 #[serde(rename_all(serialize = "snake_case", deserialize = "snake_case"))]
 pub enum ShortWeekday {
-    #[serde(alias = "mon")]
+    #[serde(rename = "mon")]
     Monday,
-    #[serde(alias = "tue")]
+    #[serde(rename = "tue")]
     Tuesday,
-    #[serde(alias = "wed")]
+    #[serde(rename = "wed")]
     Wednesday,
-    #[serde(alias = "thu")]
+    #[serde(rename = "thu")]
     Thursday,
-    #[serde(alias = "fri")]
+    #[serde(rename = "fri")]
     Friday,
-    #[serde(alias = "sat")]
+    #[serde(rename = "sat")]
     Saturday,
-    #[serde(alias = "sun")]
+    #[serde(rename = "sun")]
     Sunday,
 }

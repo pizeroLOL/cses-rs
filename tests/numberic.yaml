@@ -1,0 +1,49 @@
+version: 1
+subjects:
+- name: Math
+  simplified_name: M
+  teacher: Mr. A
+  room: '101'
+- name: English
+  simplified_name: E
+  teacher: Mr. B
+  room: '102'
+- name: Physics
+  simplified_name: P
+  teacher: Mr. C
+  room: '103'
+- name: Chemistry
+  simplified_name: C
+  teacher: Mr. D
+  room: '104'
+schedules:
+- name: Monday
+  enable_day: 1
+  weeks: all
+  classes:
+  - subject: Math
+    start_time: 08:00:00
+    end_time: 09:00:00
+  - subject: English
+    start_time: 09:00:00
+    end_time: 10:00:00
+- name: Tuesday-Odd
+  enable_day: 2
+  weeks: odd
+  classes:
+  - subject: Physics
+    start_time: 08:00:00
+    end_time: 09:00:00
+  - subject: English
+    start_time: 09:00:00
+    end_time: 10:00:00
+- name: Tuesday-Even
+  enable_day: 2
+  weeks: even
+  classes:
+  - subject: Chemistry
+    start_time: 08:00:00
+    end_time: 09:00:00
+  - subject: English
+    start_time: 09:00:00
+    end_time: 10:00:00

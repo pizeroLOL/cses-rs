@@ -6,7 +6,7 @@ pub use weekday::{NumbericWeekday, ShortWeekday};
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Clone, Deserialize, PartialEq)]
 pub struct Subject {
     pub name: String,
     pub simplified_name: Option<String>,
@@ -14,14 +14,14 @@ pub struct Subject {
     pub room: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct Class {
     pub subject: String,
     pub start_time: Time,
     pub end_time: Time,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
 #[serde(rename_all(serialize = "snake_case", deserialize = "snake_case"))]
 pub enum WeekType {
     All,
@@ -29,13 +29,14 @@ pub enum WeekType {
     Even,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+#[serde(untagged)]
 pub enum Weekday {
     Short(ShortWeekday),
     Numberic(NumbericWeekday),
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct Schedule {
     pub name: String,
     pub enable_day: Weekday,
@@ -43,7 +44,7 @@ pub struct Schedule {
     pub classes: Vec<Class>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct CsesConfig {
     pub version: u32,
     pub subjects: Vec<Subject>,
