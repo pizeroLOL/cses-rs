@@ -2,6 +2,16 @@
 name = "cses-rs"
 version = "0.1.0"
 edition = "2021"
+authors = ["Pizero <zhaory200707@outlook.com>"]
+description = "A CSES spec impl in Rust"
+rust-version = "1.84.1"
+documentation = "https://docs.rs/cses-rs"
+readme = "README.md"
+keywords = ["cses", "data-structure"]
+categories = ["data-structures"]
+license = "MIT"
+repository = "https://github.com/pizerolol/cses-rs"
+homepage = "https://github.com/pizerolol/cses-rs"
 
 [dependencies]
 serde = { version = "1.0.217", features = ["serde_derive"] }
