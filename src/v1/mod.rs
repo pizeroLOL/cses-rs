@@ -1,7 +1,8 @@
 mod time;
+mod weekday;
 
-use serde_repr::{Deserialize_repr, Serialize_repr};
 pub use time::Time;
+pub use weekday::{NumbericWeekday, ShortWeekday};
 
 use serde::{Deserialize, Serialize};
 
@@ -28,23 +29,16 @@ pub enum WeekType {
     Even,
 }
 
-#[derive(Debug, Serialize_repr, Deserialize_repr, PartialEq)]
-#[repr(u8)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Weekday {
-    Monday = 1,
-    Tuesday = 2,
-    Wednesday = 3,
-    Thursday = 4,
-    Friday = 5,
-    Saturday = 6,
-    Sunday = 7,
+    Short(ShortWeekday),
+    Numberic(NumbericWeekday),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Schedule {
     pub name: String,
-    // TODO: support @rinlit type https://github.com/Class-Widgets/Class-Widgets/blob/main/cses_mgr.py
-    pub enable_day: u8,
+    pub enable_day: Weekday,
     pub weeks: WeekType,
     pub classes: Vec<Class>,
 }
