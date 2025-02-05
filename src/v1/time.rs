@@ -5,11 +5,17 @@ use std::{
 
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
-// 时间 24 * 60 * 60
+/// 时间类
+/// 24 * 60 * 60
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub struct Time(i64);
 
 impl Time {
+    /// 新建时间
+    /// h：小时
+    /// m：分钟
+    /// s：秒
+    /// 当分钟和秒大于 60 会自动进位，小于 60 会自动退位
     pub fn new(h: i64, m: i64, s: i64) -> Self {
         Time(h * 60 * 60 + m * 60 + s)
     }
@@ -29,7 +35,15 @@ impl Time {
 
 impl Display for Time {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "{:02}:{:02}:{:02}", self.h(), self.m(), self.s())
+        let neg = if self.0 < 0 { "-" } else { "" };
+        write!(
+            f,
+            "{}{:02}:{:02}:{:02}",
+            neg,
+            self.h().abs(),
+            self.m().abs(),
+            self.s().abs()
+        )
     }
 }
 
@@ -55,6 +69,16 @@ impl<'de> Deserialize<'de> for Time {
                 .map_err(|_| de::Error::invalid_type(de::Unexpected::Str(it), &"an integer"))
         }
         let s = String::deserialize(deserializer)?;
+        let is_neg = s.starts_with('-');
+        let s = if !is_neg {
+            s
+        } else {
+            s.chars()
+                .enumerate()
+                .filter(|(i, _)| *i != 0)
+                .map(|(_, v)| v)
+                .collect::<String>()
+        };
         let v: Vec<&str> = s.split(':').collect();
         let len = v.len();
         if len != 3 {
@@ -63,7 +87,9 @@ impl<'de> Deserialize<'de> for Time {
         let h = parse_num::<D>(v[0])?;
         let m = parse_num::<D>(v[1])?;
         let s = parse_num::<D>(v[2])?;
-        Ok(Time::new(h, m, s))
+        let t = h * 60 * 60 + m * 60 + s;
+        let o = if is_neg { Time(-t) } else { Time(t) };
+        Ok(o)
     }
 }
 
@@ -97,10 +123,28 @@ mod test {
     }
 
     #[test]
+    fn test_neg_time() {
+        let t = Time::new(0, -1, -2);
+        assert_eq!(t.h(), 0);
+        assert_eq!(t.m(), -1);
+        assert_eq!(t.s(), -2);
+        assert_eq!(t.to_string(), "-00:01:02")
+    }
+
+    #[test]
     fn test_time_serde() {
         let t = Time::new(0, 2, 3);
         let s = serde_json::to_string(&t).unwrap();
         assert_eq!(s, "\"00:02:03\"");
+        let t2: Time = serde_json::from_str(&s).unwrap();
+        assert_eq!(t, t2);
+    }
+
+    #[test]
+    fn test_time_serde_neg() {
+        let t = Time::new(-1, -2, -3);
+        let s = serde_json::to_string(&t).unwrap();
+        assert_eq!(s, "\"-01:02:03\"");
         let t2: Time = serde_json::from_str(&s).unwrap();
         assert_eq!(t, t2);
     }
